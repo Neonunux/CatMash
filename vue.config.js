@@ -1,4 +1,5 @@
 module.exports = {
-  lintOnSave: false,
   publicPath: '/CatMash/',
+  transpileDependencies: ['vuex-composition-helpers'],
+  lintOnSave: false,
 };

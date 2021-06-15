@@ -1,48 +1,24 @@
 <script lang="ts">
-import { sampleSize } from 'lodash';
-import { defineComponent, ref } from 'vue';
-
-import baseFighters from '../assets/resources/fighters.json';
-
-type Fighter = {
-  id: string,
-  imageUrl: string,
-  score: number,
-};
-
-const initialScore = 0;
-const winGain = 1;
-const loseGain = -1;
-
-const fighters = baseFighters.map((fighter) => ({
-  ...fighter,
-  score: initialScore,
-}));
+import { defineComponent } from 'vue';
+import { useMutations, useState } from 'vuex-composition-helpers';
 
 export default defineComponent({
   name: 'Home',
   setup() {
-    const fighterA = ref<Fighter>(fighters[0]);
-    const fighterB = ref<Fighter>(fighters[0]);
+    const { battlingFighters: fighters } = useState(['battlingFighters']);
+    const { enterNewBattle } = useMutations(['enterNewBattle']);
+    const { chooseBattleWinner } = useMutations(['chooseBattleWinner']);
 
-    const enterNextBattle = () => {
-      [
-        fighterA.value,
-        fighterB.value,
-      ] = sampleSize(fighters, 2);
-    };
-    enterNextBattle();
+    enterNewBattle();
 
-    const chooseWinner = (fighterId: string) => {
-      fighterA.value.score += fighterA.value.id === fighterId ? winGain : loseGain;
-      fighterB.value.score += fighterB.value.id === fighterId ? winGain : loseGain;
-      enterNextBattle();
+    const endBattle = (winnerId: string) => {
+      chooseBattleWinner(winnerId);
+      enterNewBattle();
     };
 
     return {
-      fighterA,
-      fighterB,
-      chooseWinner,
+      fighters,
+      endBattle,
     };
   },
 });
@@ -51,16 +27,12 @@ export default defineComponent({
 <template>
   <div class="battle">
     <button
+      v-for="fighter in fighters"
+      :key="fighter.id"
       type="button"
-      @click="chooseWinner(fighterA.id)"
+      @click="endBattle(fighter.id)"
     >
-      <img :src="fighterA.imageUrl" />
-    </button>
-    <button
-      type="button"
-      @click="chooseWinner(fighterB.id)"
-    >
-      <img :src="fighterB.imageUrl" />
+      <img :src="fighter.imageUrl" />
     </button>
   </div>
 </template>
