@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 import { useMutations, useState } from 'vuex-composition-helpers';
 
 export default defineComponent({
-  name: 'Home',
+  name: 'Battle',
   setup() {
     const { battlingFighters: fighters } = useState(['battlingFighters']);
     const { enterNewBattle } = useMutations(['enterNewBattle']);
